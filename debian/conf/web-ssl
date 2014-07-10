@@ -7,6 +7,7 @@
   SSLEngine On
   SSLCertificateFile _SSL_CERT_
   SSLCertificateKeyFile _SSL_KEY_
+  SSLCACertificateFile _SSL_CA_
   RequestHeader set X_FORWARDED_PROTO 'https'
   DocumentRoot /opt/blank-noop-app/public
 
