@@ -41,7 +41,7 @@ case "$1" in
       web_ssl_cert="$RET"
 
       db_get ${APP_NAME}/server/ssl_key
-      wel_ssl_key="$RET"
+      web_ssl_key="$RET"
 
       db_get ${APP_NAME}/server/ssl_ca
       web_ssl_ca="$RET"
