@@ -1,0 +1,60 @@
+#PerlSwitches -I/srv/www/perl-lib -T
+#PerlLoadModule Apache::OpenProjectAuthentication
+
+<VirtualHost *:_SSL_PORT_>
+  ServerName _HOSTNAME_
+
+  SSLEngine On
+  SSLCertificateFile _SSL_CERT_
+  SSLCertificateKeyFile _SSL_KEY_
+  RequestHeader set X_FORWARDED_PROTO 'https'
+  DocumentRoot /opt/_APP_NAME_/public
+
+  <Directory /opt/_APP_NAME_>
+    Options FollowSymLinks
+  </Directory>
+
+  <Directory /opt/_APP_NAME_> 
+    Options FollowSymLinks
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+  </Directory>
+
+  # Enabling compression for common text formats
+  AddOutputFilterByType DEFLATE text/html text/css application/x-javascript application/javascript
+
+  # Send expiry headers for assets, that carry an asset id. Assuming, an asset
+  # id is a unix timestamp, which is currently a 10 digit integer. This might
+  # change in the far future.
+  <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
+    ExpiresActive On
+    ExpiresDefault "access plus 1 year" 
+  </FilesMatch>
+
+  <LocationMatch "/[^/]+/sys">
+    Order deny,allow
+    Deny from all
+  </LocationMatch>
+
+  <Location /svn>
+#    DAV svn
+#    SVNParentPath "/data/openproject/shared/ticket/svn" 
+#    DirectorySlash Off
+
+#    AuthType Basic
+#    AuthName "Secured Area" 
+#    Require valid-user
+
+#    PerlAccessHandler Apache::Authn::Redmine::access_handler
+#    PerlAuthenHandler Apache::Authn::Redmine::authen_handler
+
+#    RedmineUrl 'http://[URL TO OPENPROJECT INSTANCE]'
+#    RedmineApiKey '[SUPER SECRET]'
+
+    <Limit OPTIONS PROPFIND GET REPORT MKACTIVITY PROPPATCH PUT CHECKOUT MKCOL MOVE COPY DELETE LOCK UNLOCK MERGE>
+      Allow from all
+    </Limit>
+  </Location>
+</VirtualHost>
+

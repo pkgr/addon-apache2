@@ -1,0 +1,29 @@
+#!/bin/sh -e
+
+APP_NAME="_APP_NAME_"
+APP_SAFE_NAME="_APP_SAFE_NAME_"
+
+# Source debconf library.
+. /usr/share/debconf/confmodule
+
+db_input high ${APP_NAME}/server/autoinstall || true
+db_go
+
+db_get ${APP_NAME}/server/autoinstall
+if [ "$RET" = "false" ]; then
+  exit 0
+fi
+
+db_input high ${APP_NAME}/server/hostname || true
+db_go
+db_input high ${APP_NAME}/server/ssl || true
+db_go
+
+db_get ${APP_NAME}/server/ssl
+if [ "$RET" = "true" ]; then
+  db_input high ${APP_NAME}/server/ssl_cert || true
+  db_input high ${APP_NAME}/server/ssl_key || true
+  db_input high ${APP_NAME}/server/ssl_ca || true
+  db_go
+fi
+

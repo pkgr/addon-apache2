@@ -1,0 +1,5 @@
+_APP_NAME_-apache2 (_APP_VERSION_-_APP_ITERATION_) stable; urgency=low
+
+  * First version.
+
+ -- Packager.io <support@packager.io>  Tue, 04 Jan 2011 22:49:03 +0100
