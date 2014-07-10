@@ -72,7 +72,7 @@ case "$1" in
       mv -f "$tmpfile" "$OUTPUT"
       chmod 0640 "$OUTPUT"
 
-      a2enmod proxy_http headers
+      a2enmod proxy_http headers expires
       a2dissite default
       a2ensite "${APP_NAME}"
       service apache2 reload
