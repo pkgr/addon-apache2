@@ -61,13 +61,13 @@ case "$1" in
       tmpfile=$(mktemp)
       cp -f "$template" "$tmpfile"
 
-      sed -i "s/_HOSTNAME_/${web_hostname}/g" ${tmpfile}
-      sed -i "s/_SSL_CERT_/${web_ssl_cert}/g" ${tmpfile}
-      sed -i "s/_SSL_KEY_/${web_ssl_key}/g" ${tmpfile}
-      sed -i "s/_SSL_CA_/${web_ssl_ca}/g" ${tmpfile}
-      sed -i "s/_SSL_PORT_/${web_ssl_port}/g" ${tmpfile}
-      sed -i "s/_RAW_PORT_/${web_raw_port}/g" ${tmpfile}
-      sed -i "s/_APP_PORT_/${web_app_port}/g" ${tmpfile}
+      sed -i "s|_HOSTNAME_|${web_hostname}|g" ${tmpfile}
+      sed -i "s|_SSL_CERT_|${web_ssl_cert}|g" ${tmpfile}
+      sed -i "s|_SSL_KEY_|${web_ssl_key}|g" ${tmpfile}
+      sed -i "s|_SSL_CA_|${web_ssl_ca}|g" ${tmpfile}
+      sed -i "s|_SSL_PORT_|${web_ssl_port}|g" ${tmpfile}
+      sed -i "s|_RAW_PORT_|${web_raw_port}|g" ${tmpfile}
+      sed -i "s|_APP_PORT_|${web_app_port}|g" ${tmpfile}
 
       mv -f "$tmpfile" "$OUTPUT"
       chmod 0640 "$OUTPUT"
