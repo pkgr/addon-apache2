@@ -3,25 +3,16 @@
 
   ErrorLog /var/log/apache2/error
 
-  DocumentRoot /opt/_APP_NAME_
-  <Directory />
-    Options none
-    AllowOverride None
-    Order Deny,Allow
-    Deny from all
-  </Directory>
-
-  <Directory /opt/_APP_NAME_>
-    Options +FollowSymLinks
-
-    Order Deny,Allow
-    Deny from all
-  </Directory>
-
   <LocationMatch "/sys">
     Order Deny,Allow
     Deny from all
     Allow from 127.0.0.1
   </LocationMatch>
+
+  <Location />
+    ProxyPass http://127.0.0.1:_APP_PORT_/
+    ProxyPassReverse http://127.0.0.1:_APP_PORT_/
+  </Location>
+
 </VirtualHost>
 

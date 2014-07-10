@@ -8,18 +8,7 @@
   SSLCertificateFile _SSL_CERT_
   SSLCertificateKeyFile _SSL_KEY_
   RequestHeader set X_FORWARDED_PROTO 'https'
-  DocumentRoot /opt/_APP_NAME_/public
-
-  <Directory /opt/_APP_NAME_>
-    Options FollowSymLinks
-  </Directory>
-
-  <Directory /opt/_APP_NAME_> 
-    Options FollowSymLinks
-    AllowOverride None
-    Order allow,deny
-    Allow from all
-  </Directory>
+  DocumentRoot /opt/blank-noop-app/public
 
   # Enabling compression for common text formats
   AddOutputFilterByType DEFLATE text/html text/css application/x-javascript application/javascript
@@ -56,5 +45,11 @@
       Allow from all
     </Limit>
   </Location>
+
+  <Location />
+    ProxyPass http://127.0.0.1:_APP_PORT_/
+    ProxyPassReverse http://127.0.0.1:_APP_PORT_/
+  </Location>
+
 </VirtualHost>
 
