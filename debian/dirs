@@ -1,2 +1,4 @@
 etc/_APP_NAME_/conf.d
+etc/_APP_NAME_/apache2
+etc/_APP_NAME_/apache2/vhost
 

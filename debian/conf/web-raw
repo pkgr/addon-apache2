@@ -1,18 +1,14 @@
+Include /etc/_APP_NAME_/apache2/*.conf
+
 <VirtualHost *:_RAW_PORT_>
   ServerName _HOSTNAME_
+  DocumentRoot /opt/_APP_NAME_/public
 
-  ErrorLog /var/log/apache2/error
-
-  <LocationMatch "/sys">
-    Order Deny,Allow
-    Deny from all
-    Allow from 127.0.0.1
-  </LocationMatch>
+  Include /etc/_APP_NAME_/apache2/vhost/*.conf
 
   <Location />
     ProxyPass http://127.0.0.1:_APP_PORT_/
     ProxyPassReverse http://127.0.0.1:_APP_PORT_/
   </Location>
-
 </VirtualHost>
 

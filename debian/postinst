@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -ex
 
@@ -51,8 +51,11 @@ case "$1" in
       web_raw_port="80"
       web_app_port=$(${APP_NAME} config:get PORT || echo "6000")
 
+      vhost_includes="compression expiration sys"
+
       if [ "$web_ssl" = "true" ]; then
 	template="$TEMPLATE_SSL"
+	vhost_includes="ssl ${vhost_includes}"
 	a2enmod ssl
       else
 	template="$TEMPLATE_RAW"
@@ -62,20 +65,42 @@ case "$1" in
       cp -f "$template" "$tmpfile"
 
       sed -i "s|_HOSTNAME_|${web_hostname}|g" ${tmpfile}
-      sed -i "s|_SSL_CERT_|${web_ssl_cert}|g" ${tmpfile}
-      sed -i "s|_SSL_KEY_|${web_ssl_key}|g" ${tmpfile}
-      sed -i "s|_SSL_CA_|${web_ssl_ca}|g" ${tmpfile}
-      sed -i "s|_SSL_PORT_|${web_ssl_port}|g" ${tmpfile}
       sed -i "s|_RAW_PORT_|${web_raw_port}|g" ${tmpfile}
+      sed -i "s|_SSL_PORT_|${web_ssl_port}|g" ${tmpfile}
       sed -i "s|_APP_PORT_|${web_app_port}|g" ${tmpfile}
 
       mv -f "$tmpfile" "$OUTPUT"
       chmod 0640 "$OUTPUT"
 
+      # copy server-level includes
+      for conf in /usr/share/${APP_NAME}-apache2/templates/includes/*.conf; do
+	tmpfile=$(mktemp)
+	cp -f "$conf" "$tmpfile"
+
+	dst="/etc/${APP_NAME}/apache2/$(basename "$conf")"
+	mv -f "$tmpfile" "$dst"
+	chmod 0640 "$dst"
+      done
+
+      # copy vhost-level includes
+      for conf in vhost_includes; do
+	tmpfile=$(mktemp)
+	src="/usr/share/${APP_NAME}-apache2/templates/includes/vhost/${conf}.conf"
+	cp -f "$conf" "$tmpfile"
+
+	sed -i "s|_SSL_CERT_|${web_ssl_cert}|g" ${tmpfile}
+	sed -i "s|_SSL_KEY_|${web_ssl_key}|g" ${tmpfile}
+	sed -i "s|_SSL_CA_|${web_ssl_ca}|g" ${tmpfile}
+
+	dst="/etc/${APP_NAME}/apache2/vhost/${conf}.conf"
+	mv -f "$tmpfile" "$dst"
+	chmod 0640 "$dst"
+      done
+
       a2enmod proxy_http headers expires
       a2dissite default
       a2ensite "${APP_NAME}"
-      service apache2 reload
+      service apache2 reload || true
 
     fi
   ;;
