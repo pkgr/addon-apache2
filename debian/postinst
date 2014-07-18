@@ -85,6 +85,8 @@ case "$1" in
 	chmod 0640 "$dst"
       done
 
+      # remove existing vhost config files
+      rm -f /etc/${APP_NAME}/apache2/vhost/*.conf
       # copy vhost-level includes
       for conf in ${vhost_includes}; do
 	tmpfile=$(mktemp)
