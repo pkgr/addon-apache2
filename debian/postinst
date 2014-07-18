@@ -78,9 +78,9 @@ case "$1" in
       for conf in ${server_includes}; do
 	tmpfile=$(mktemp)
 	src="/usr/share/${APP_NAME}-apache2/templates/includes/${conf}.conf"
-	cp -f "$conf" "$tmpfile"
-
 	dst="/etc/${APP_NAME}/apache2/${conf}.conf"
+
+	cp -f "$src" "$tmpfile"
 	mv -f "$tmpfile" "$dst"
 	chmod 0640 "$dst"
       done
@@ -89,13 +89,14 @@ case "$1" in
       for conf in ${vhost_includes}; do
 	tmpfile=$(mktemp)
 	src="/usr/share/${APP_NAME}-apache2/templates/includes/vhost/${conf}.conf"
-	cp -f "$conf" "$tmpfile"
+	dst="/etc/${APP_NAME}/apache2/vhost/${conf}.conf"
+
+	cp -f "$src" "$tmpfile"
 
 	sed -i "s|_SSL_CERT_|${web_ssl_cert}|g" ${tmpfile}
 	sed -i "s|_SSL_KEY_|${web_ssl_key}|g" ${tmpfile}
 	sed -i "s|_SSL_CA_|${web_ssl_ca}|g" ${tmpfile}
 
-	dst="/etc/${APP_NAME}/apache2/vhost/${conf}.conf"
 	mv -f "$tmpfile" "$dst"
 	chmod 0640 "$dst"
       done
