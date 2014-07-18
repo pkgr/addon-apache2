@@ -72,12 +72,15 @@ case "$1" in
       mv -f "$tmpfile" "$OUTPUT"
       chmod 0640 "$OUTPUT"
 
+      server_includes=""
+
       # copy server-level includes
-      for conf in /usr/share/${APP_NAME}-apache2/templates/includes/*.conf; do
+      for conf in ${server_includes}; do
 	tmpfile=$(mktemp)
+	src="/usr/share/${APP_NAME}-apache2/templates/includes/${conf}.conf"
 	cp -f "$conf" "$tmpfile"
 
-	dst="/etc/${APP_NAME}/apache2/$(basename "$conf")"
+	dst="/etc/${APP_NAME}/apache2/${conf}.conf"
 	mv -f "$tmpfile" "$dst"
 	chmod 0640 "$dst"
       done
