@@ -86,7 +86,7 @@ case "$1" in
       done
 
       # copy vhost-level includes
-      for conf in vhost_includes; do
+      for conf in ${vhost_includes}; do
 	tmpfile=$(mktemp)
 	src="/usr/share/${APP_NAME}-apache2/templates/includes/vhost/${conf}.conf"
 	cp -f "$conf" "$tmpfile"
