@@ -10,7 +10,9 @@ Template: _APP_NAME_/server/ssl
 Type: boolean
 Default: false
 Description: Do you want to enable SSL for your web server?
- Enabling SSL makes your _APP_NAME_ installation more secure. If you choose YES, you will need to provide the path to your SSL certificate, SSL private key, and SSL Certification Authority bundle.
+ Enabling SSL makes your _APP_NAME_ installation more secure.
+ .
+ If you choose YES, you will need to provide the path to your SSL certificate, SSL private key, and SSL Certification Authority bundle.
 
 Template: _APP_NAME_/server/hostname
 Type: string
