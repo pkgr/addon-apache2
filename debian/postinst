@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 # summary of how this script can be called:
 #        * <postinst> `configure' <most-recently-configured-version>
