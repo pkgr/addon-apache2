@@ -51,7 +51,7 @@ case "$1" in
       web_raw_port="80"
       web_app_port=$(${APP_NAME} config:get PORT || echo "6000")
 
-      vhost_includes="compression expiration sys"
+      vhost_includes="compression expiration sys assets"
 
       if [ "$web_ssl" = "true" ]; then
 	template="$TEMPLATE_SSL"
