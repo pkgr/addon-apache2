@@ -55,7 +55,11 @@ case "$1" in
 
       if [ "$web_ssl" = "true" ]; then
 	template="$TEMPLATE_SSL"
-	vhost_includes="ssl ${vhost_includes}"
+	if [ -z "$web_ssl_ca" ]; then
+	  vhost_includes="ssl ${vhost_includes}"
+	else
+	  vhost_includes="ssl ssl_ca ${vhost_includes}"
+	fi
 	a2enmod ssl
       else
 	template="$TEMPLATE_RAW"

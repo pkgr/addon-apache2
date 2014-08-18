@@ -34,6 +34,6 @@ Description: Path to your private SSL key:
 
 Template: _APP_NAME_/server/ssl_ca
 Type: string
-Description: Path to the CA bundle:
+Description: Path to the CA bundle (leave blank if none):
  Enter the path to your Certification Authority bundle. This file contains the concatenated list of all the intermediary certificates between your SSL certificate and the root certificate. This should have been provided by your SSL provider.
 
