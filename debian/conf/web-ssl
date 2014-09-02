@@ -1,6 +1,9 @@
-#PerlSwitches -I/srv/www/perl-lib -T
-#PerlLoadModule Apache::OpenProjectAuthentication
 Include /etc/_APP_NAME_/apache2/*.conf
+
+<VirtualHost *:_RAW_PORT_>
+  ServerName _HOSTNAME_
+  Redirect permanent / https://_HOSTNAME_:_SSL_PORT_/
+</VirtualHost>
 
 <VirtualHost *:_SSL_PORT_>
   ServerName _HOSTNAME_
