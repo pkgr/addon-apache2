@@ -1,0 +1,171 @@
+#!/bin/bash
+
+set -e
+
+. "${INSTALLER_DIR}/wizard"
+
+TEMPLATE_SSL="conf/web-ssl"
+TEMPLATE_RAW="conf/web-raw"
+VHOST_INCLUDES_DIR="/etc/${APP_NAME}/addons/apache2/includes/vhost"
+SERVER_INCLUDES_DIR="/etc/${APP_NAME}/addons/apache2/includes/server"
+OSFAMILY="$(wiz_fact osfamily)"
+
+# remove existing server config files
+rm -f ${SERVER_INCLUDES_DIR}/*.conf
+mkdir -p "${SERVER_INCLUDES_DIR}"
+# remove existing vhost config files
+rm -f ${VHOST_INCLUDES_DIR}/*.conf
+mkdir -p "${VHOST_INCLUDES_DIR}"
+
+enable_apache2_mod() {
+	case "$OSFAMILY" in
+		"debian")
+			a2enmod $1
+			;;
+		"redhat")
+			local output="${SERVER_INCLUDES_DIR}/${1}_mod.conf"
+			echo "LoadModule ${1}_module modules/mod_${1}.so" > "$output"
+			chcon -t httpd_config_t "$output"
+			;;
+	esac
+}
+
+enable_apache2_site() {
+	local name="$1"
+	local tmpfile="$2"
+	case "$OSFAMILY" in
+		"debian")
+			local output="/etc/apache2/sites-available/${name}"
+			mv -f "$tmpfile" "$output"
+			chmod 0640 "$output"
+
+			a2ensite "$name"
+			;;
+		"redhat")
+			local output="/etc/httpd/conf.d/${name}.conf"
+			mv -f "$tmpfile" "$output"
+			chmod 0640 "$output"
+			chcon -t httpd_config_t "$output"
+			;;
+	esac
+}
+
+disable_apache2_site() {
+	local name="$1"
+	case "$OSFAMILY" in
+		"debian")
+			a2dissite "$name" || true
+			;;
+		"redhat")
+			local target="/etc/httpd/conf.d/${name}.conf"
+			if [ -f "$target" ] ; then
+				cp "$target" "${target}.bak"
+				echo "" > "$target"
+			fi
+			;;
+	esac
+}
+
+disable_default_apache2_site() {
+	# debian
+	disable_apache2_site "default"
+	# redhat
+	disable_apache2_site "welcome"
+}
+
+reload_apache2() {
+	case "$OSFAMILY" in
+		"debian")
+			service apache2 restart || true
+			;;
+		"redhat")
+			service httpd restart || true
+			;;
+	esac
+}
+
+enable_apache2_vhost_include() {
+	echo "OS: $OSFAMILY"
+	local output="$1"
+	chmod 0640 "$output"
+
+	if [ "$OSFAMILY" = "redhat" ] ; then
+		echo "SELINUX"
+		# deal with SELinux
+		chcon -t httpd_config_t "$dst"
+	fi
+}
+
+configure_apache2_server() {
+	local web_hostname="$(wiz_get server/hostname)"
+	local web_ssl="$(wiz_get server/ssl)"
+	local web_ssl_cert="$(wiz_get server/ssl_cert)"
+	local web_ssl_key="$(wiz_get server/ssl_key)"
+	local web_ssl_ca="$(wiz_get server/ssl_ca)"
+	local web_ssl_port="443"
+	local web_raw_port="80"
+	local web_app_port=$(${APP_NAME} config:get PORT || echo "6000")
+	local vhost_includes="compression expiration sys assets"
+	local vhost_file=$(mktemp)
+	local template="$TEMPLATE_RAW"
+	local src
+	local dst
+	local tmpfile
+
+	if [ "$web_ssl" = "yes" ] ; then
+		template="$TEMPLATE_SSL"
+		if [ -z "$web_ssl_ca" ] ; then
+			vhost_includes="ssl ${vhost_includes}"
+		else
+			vhost_includes="ssl ssl_ca ${vhost_includes}"
+		fi
+		enable_apache2_mod "ssl"
+	fi
+
+	cp -f "$template" "$vhost_file"
+
+	# replace variables
+	sed -i "s|_HOSTNAME_|${web_hostname}|g" ${vhost_file}
+	sed -i "s|_RAW_PORT_|${web_raw_port}|g" ${vhost_file}
+	sed -i "s|_SSL_PORT_|${web_ssl_port}|g" ${vhost_file}
+	sed -i "s|_APP_PORT_|${web_app_port}|g" ${vhost_file}
+	sed -i "s|_APP_NAME_|${APP_NAME}|g" ${vhost_file}
+
+	# copy vhost-level includes
+	for conf in ${vhost_includes}; do
+		tmpfile=$(mktemp)
+		src="conf/includes/vhost/${conf}.conf"
+		dst="${VHOST_INCLUDES_DIR}/${conf}.conf"
+		
+		cp -f "$src" "$tmpfile"
+
+		sed -i "s|_SSL_CERT_|${web_ssl_cert}|g" ${tmpfile}
+		sed -i "s|_SSL_KEY_|${web_ssl_key}|g" ${tmpfile}
+		sed -i "s|_SSL_CA_|${web_ssl_ca}|g" ${tmpfile}
+
+		mv -f "$tmpfile" "$dst"
+		enable_apache2_vhost_include "$dst"
+	done
+
+	enable_apache2_mod "proxy_http"
+	enable_apache2_mod "headers"
+	enable_apache2_mod "expires"
+
+	disable_default_apache2_site
+	enable_apache2_site "${APP_NAME}" "$vhost_file"
+	reload_apache2
+
+}
+
+case "$(wiz_get "server/autoinstall")" in
+	"skip")
+		;;
+	"install")
+		configure_apache2_server
+		;;
+	*)
+		echo "Unknown value for server/autoinstall"
+		;;
+esac
+
+exit 0

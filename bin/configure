@@ -1,0 +1,92 @@
+#!/bin/bash
+
+set -e
+
+. "${INSTALLER_DIR}/wizard"
+
+input_start() {
+	wiz_put "server/autoinstall"
+	if wiz_ask ; then
+		RET=$(wiz_get "server/autoinstall")
+		if [ "$RET" = "install" ] ; then
+			STATE="server_params"
+		else
+			STATE="done"
+		fi
+	else
+		STATE="done"
+		echo "Apache2 configuration canceled."
+		exit 1
+	fi
+
+}
+
+input_server_params() {
+	local default_hostname=$(hostname -f 2>/dev/null || hostname || echo "example.com")
+
+	if ! wiz_get "server/hostname" ; then
+		wiz_set "server/hostname" "$default_hostname"
+		wiz_unseen "server/hostname"
+	fi
+
+	wiz_put "server/hostname"
+	if wiz_ask ; then
+		STATE="server_ssl"
+	else
+		STATE="start"
+	fi
+}
+
+input_server_ssl() {
+	wiz_put "server/ssl"
+	if wiz_ask ; then
+		RET="$(wiz_get "server/ssl")"
+		if [ "$RET" = "yes" ] ; then
+			STATE="server_ssl_params"
+		else
+			STATE="done"
+		fi
+	else
+		STATE="server_params"
+	fi
+}
+
+input_server_ssl_params() {
+	wiz_put "server/ssl_cert"
+	wiz_put "server/ssl_key"
+	wiz_put "server/ssl_ca"
+
+	if wiz_ask ; then
+		STATE="done"
+	else
+		STATE="server_ssl"
+	fi
+}
+
+
+state_machine() {
+	case "$1" in
+		"start")
+			input_start
+			;;
+		"server_params")
+			input_server_params
+			;;
+		"server_ssl")
+			input_server_ssl
+			;;
+		"server_ssl_params")
+			input_server_ssl_params
+			;;
+		"done")
+			echo "DONE"
+			break
+			;;
+		*)
+			echo "invalid state ${STATE}"
+			break
+			;;
+	esac
+}
+
+wizard "start"

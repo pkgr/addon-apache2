@@ -1,0 +1,46 @@
+#!/bin/bash
+
+set -e
+
+. "${INSTALLER_DIR}/wizard"
+
+install_apache2_server() {
+	case "$(wiz_fact "osfamily")" in
+		"debian")
+			if ! wiz_check_package "apache2" ; then
+				apt-get install apache2 -y --force-yes
+			fi
+			;;
+		"redhat")
+			if ! wiz_check_package "httpd" ; then
+				yum install -y httpd
+				chkconfig httpd on
+				service httpd start
+			fi
+			if ! getsebool httpd_can_network_connect | grep -q "\-\-> on" ; then
+				setsebool -P httpd_can_network_connect 1
+			fi
+			;;
+	esac
+}
+
+create_conf_dir() {
+	local dir="/etc/${APP_NAME}/addons/apache2"
+	mkdir -p "$dir"
+	chown -R ${APP_USER}.${APP_GROUP} "$dir"
+}
+
+create_conf_dir
+
+case "$(wiz_get "server/autoinstall")" in
+	"skip")
+		;;
+	"install")
+		install_apache2_server
+		;;
+	*)
+		echo "Unknown value for server/autoinstall"
+		;;
+esac
+
+exit 0

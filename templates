@@ -1,0 +1,43 @@
+Template: server/autoinstall
+Type: select
+Choices: skip, install
+Translations: Skip, Install apache2 server
+Default: install
+Description: Do you want to use this wizard to help setup your web server?
+ If you want, we can automatically create the web host configuration required by _APP_NAME_.
+ .
+ If you choose NOT to use this wizard, you will have to manually setup the web host by yourself.
+
+Template: server/ssl
+Type: select
+Choices: yes, no
+Translations: Yes, No
+Default: no
+Description: Do you want to enable SSL for your web server?
+ Enabling SSL makes your _APP_NAME_ installation more secure.
+ .
+ If you choose YES, you will need to provide the path to your SSL certificate, SSL private key, and SSL Certification Authority bundle.
+
+Template: server/hostname
+Type: string
+Default: www.example.com
+Description: Your fully qualified domain name:
+ Enter the fully qualified domain name (FQDN), where this server can be reached.
+
+Template: server/ssl_cert
+Type: string
+Default: /etc/ssl/certs/example.com.crt
+Description: Path to your SSL certificate: 
+ Enter the absolute path to your SSL certificate.
+
+Template: server/ssl_key
+Type: string
+Default: /etc/ssl/private/example.com.key
+Description: Path to your private SSL key:
+ Enter the absolute path to your private SSL key, corresponding to the SSL certificate you chose.
+
+Template: server/ssl_ca
+Type: string
+Description: Path to the CA bundle (leave blank if none):
+ Enter the path to your Certification Authority bundle. This file contains the concatenated list of all the intermediary certificates between your SSL certificate and the root certificate. This should have been provided by your SSL provider.
+
