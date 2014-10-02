@@ -9,6 +9,7 @@ input_start() {
 	if wiz_ask ; then
 		RET=$(wiz_get "server/autoinstall")
 		if [ "$RET" = "install" ] ; then
+			wiz_set "server/variant" "apache2"
 			STATE="server_params"
 		else
 			STATE="done"
