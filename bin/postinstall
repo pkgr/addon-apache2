@@ -85,12 +85,10 @@ reload_apache2() {
 }
 
 enable_apache2_vhost_include() {
-	echo "OS: $OSFAMILY"
 	local output="$1"
 	chmod 0640 "$output"
 
 	if [ "$OSFAMILY" = "redhat" ] ; then
-		echo "SELINUX"
 		# deal with SELinux
 		chcon -t httpd_config_t "$dst"
 	fi
