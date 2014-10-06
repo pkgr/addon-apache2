@@ -12,6 +12,7 @@ install_apache2_server() {
 			fi
 			;;
 		"redhat")
+			wiz_check_package "mod_ssl" || yum install -y "mod_ssl"
 			if ! wiz_check_package "httpd" ; then
 				yum install -y httpd
 				chkconfig httpd on
