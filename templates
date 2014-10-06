@@ -15,8 +15,8 @@ Description: Server variant:
 
 Template: server/ssl
 Type: select
-Choices: yes, no
-Translations: Yes, No
+Choices: no, yes
+Translations: No, Yes
 Default: no
 Description: Do you want to enable SSL for your web server?
  Enabling SSL makes your _APP_NAME_ installation more secure.
