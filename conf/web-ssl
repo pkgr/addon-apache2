@@ -9,11 +9,8 @@ Include /etc/_APP_NAME_/addons/apache2/includes/server/*.conf
   ServerName _HOSTNAME_
   DocumentRoot /opt/_APP_NAME_/public
 
-  <Location />
-    ProxyPass http://127.0.0.1:_APP_PORT_/ retry=0
-    ProxyPassReverse http://127.0.0.1:_APP_PORT_/
-  </Location>
-
   Include /etc/_APP_NAME_/addons/apache2/includes/vhost/*.conf
-</VirtualHost>
 
+  ProxyPass / http://127.0.0.1:_APP_PORT_/ retry=0
+  ProxyPassReverse / http://127.0.0.1:_APP_PORT_/
+</VirtualHost>
