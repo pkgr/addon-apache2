@@ -25,7 +25,7 @@ input_start() {
 input_server_params() {
 	local default_hostname=$(hostname -f 2>/dev/null || hostname || echo "example.com")
 
-	if ! wiz_get "server/hostname" ; then
+	if ! wiz_get "server/hostname" &>/dev/null ; then
 		wiz_set "server/hostname" "$default_hostname"
 		wiz_unseen "server/hostname"
 	fi
