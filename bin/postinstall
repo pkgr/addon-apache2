@@ -9,7 +9,7 @@ TEMPLATE_RAW="conf/web-raw"
 VHOST_INCLUDES_DIR="/etc/${APP_NAME}/addons/apache2/includes/vhost"
 SERVER_INCLUDES_DIR="/etc/${APP_NAME}/addons/apache2/includes/server"
 OSFAMILY="$(wiz_fact osfamily)"
-CONF="/etc/${APP_NAME}/conf.d/server.conf"
+CONF="/etc/${APP_NAME}/conf.d/server"
 
 # remove existing server config files
 rm -f ${SERVER_INCLUDES_DIR}/*.conf
