@@ -37,10 +37,15 @@ enable_apache2_site() {
 	case "$OSFAMILY" in
 		"debian")
 			local output="/etc/apache2/sites-available/${name}"
-			mv -f "$tmpfile" "$output"
-			chmod 0640 "$output"
+			# starting with ubuntu-14.04, files end in .conf
+			if [ -f "$output" ] ; then
+				a2dissite "${name}" &>/dev/null || true
+				rm -f "$output"
+			fi
+			mv -f "$tmpfile" "${output}.conf"
+			chmod 0640 "${output}.conf"
 
-			a2ensite "$name"
+			a2ensite "${name}.conf"
 			;;
 		"redhat")
 			local output="/etc/httpd/conf.d/${name}.conf"
@@ -55,7 +60,12 @@ disable_apache2_site() {
 	local name="$1"
 	case "$OSFAMILY" in
 		"debian")
-			a2dissite "$name" || true
+			if [ -f "/etc/apache2/sites-enabled/$name" ] ; then
+				a2dissite "$name" || true
+			fi
+			if [ -f "/etc/apache2/sites-enabled/${name}.conf" ] ; then
+				a2dissite "${name}.conf" || true
+			fi
 			;;
 		"redhat")
 			local target="/etc/httpd/conf.d/${name}.conf"
@@ -70,6 +80,7 @@ disable_apache2_site() {
 disable_default_apache2_site() {
 	# debian
 	disable_apache2_site "default"
+	disable_apache2_site "000-default"
 	# redhat
 	disable_apache2_site "welcome"
 }
