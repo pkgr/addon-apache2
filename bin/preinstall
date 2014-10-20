@@ -19,7 +19,7 @@ install_apache2_server() {
 				service httpd start
 			fi
 			if ! getsebool httpd_can_network_connect | grep -q "\-\-> on" ; then
-				setsebool -P httpd_can_network_connect 1
+				setsebool -P httpd_can_network_connect 1 || true
 			fi
 			;;
 	esac
