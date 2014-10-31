@@ -124,6 +124,9 @@ configure_apache2_server() {
 	local web_protocol="http"
 	local web_user="www-data"
 
+	# so that the folder is not empty
+	echo "# placeholder, do not remove" > "$SERVER_INCLUDES_DIR/placeholder.conf"
+
 	if [ "$OSFAMILY" = "redhat" ] ; then
 		web_user="apache"
 	fi
