@@ -189,6 +189,7 @@ export SERVER_USER="${web_user}"
 CONF
 	chown ${APP_USER}.${APP_GROUP} "$CONF"
 
+	enable_apache2_mod "proxy"
 	enable_apache2_mod "proxy_http"
 	enable_apache2_mod "headers"
 	enable_apache2_mod "expires"
