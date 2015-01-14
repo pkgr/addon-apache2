@@ -20,7 +20,7 @@ mkdir -p "${VHOST_INCLUDES_DIR}"
 
 enable_apache2_mod() {
 	case "$OSFAMILY" in
-		"debian")
+		"debian"|"suse")
 			a2enmod $1
 			;;
 		"redhat")
@@ -53,6 +53,11 @@ enable_apache2_site() {
 			chmod 0640 "$output"
 			chcon -t httpd_config_t "$output" || true
 			;;
+		"suse")
+			local output="/etc/apache2/vhosts.d/${name}.conf"
+			mv -f "$tmpfile" "$output"
+			chmod 0640 "$output"
+			;;
 	esac
 }
 
@@ -74,6 +79,13 @@ disable_apache2_site() {
 				echo "" > "$target"
 			fi
 			;;
+		"suse")
+			local target="/etc/apache2/vhosts.d/${name}.conf"
+			if [ -f "$target" ] ; then
+				cp "$target" "${target}.bak"
+				echo "" > "$target"
+			fi
+			;;
 	esac
 }
 
@@ -87,7 +99,7 @@ disable_default_apache2_site() {
 
 reload_apache2() {
 	case "$OSFAMILY" in
-		"debian")
+		"debian"|"suse")
 			service apache2 restart || true
 			;;
 		"redhat")
@@ -129,6 +141,8 @@ configure_apache2_server() {
 
 	if [ "$OSFAMILY" = "redhat" ] ; then
 		web_user="apache"
+	elif [ "$OSFAMILY" = "suse" ] ; then
+		web_user="wwwrun"
 	fi
 
 	if [ "$web_ssl" = "yes" ] ; then

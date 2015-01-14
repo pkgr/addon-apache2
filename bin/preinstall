@@ -22,6 +22,13 @@ install_apache2_server() {
 				setsebool -P httpd_can_network_connect 1 || true
 			fi
 			;;
+		"suse")
+			if ! wiz_check_package "apache2" ; then
+				zypper install -y apache2
+				chkconfig apache2 on
+				service apache2 start
+			fi
+			;;
 	esac
 }
 
