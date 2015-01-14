@@ -193,6 +193,8 @@ CONF
 	enable_apache2_mod "proxy_http"
 	enable_apache2_mod "headers"
 	enable_apache2_mod "expires"
+	enable_apache2_mod "deflate"
+	enable_apache2_mod "filter"
 
 	disable_default_apache2_site
 	enable_apache2_site "${APP_NAME}" "$vhost_file"
