@@ -153,6 +153,12 @@ configure_apache2_server() {
 		else
 			vhost_includes="ssl ssl_ca ${vhost_includes}"
 		fi
+
+		# otherwise port 443 is not open
+		if [ "$OSFAMILY" = "suse" ] ; then
+			a2enflag SSL
+		fi
+
 		enable_apache2_mod "ssl"
 	fi
 
