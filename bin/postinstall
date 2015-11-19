@@ -188,10 +188,12 @@ configure_apache2_server() {
 	done
 
 	# generate conf file
+	web_group="$(id -Gn $web_user | cut -f 1 -d ' ')"
 	cat - <<CONF > "$CONF"
 export SERVER_HOSTNAME="${web_hostname}"
 export SERVER_PROTOCOL="${web_protocol}"
 export SERVER_USER="${web_user}"
+export SERVER_GROUP="${web_group}"
 CONF
 	chown ${APP_USER}.${APP_GROUP} "$CONF"
 
