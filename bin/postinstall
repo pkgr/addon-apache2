@@ -181,6 +181,7 @@ configure_apache2_server() {
 	sed -i "s|_APP_PORT_|${web_app_port}|g" ${vhost_file}
 	sed -i "s|_APP_NAME_|${APP_NAME}|g" ${vhost_file}
 	sed -i "s|_APP_SUBFOLDER_|${subfolder_location}|g" ${vhost_file}
+	sed -i "s|_APP_SUBFOLDER_OR_ROOT_|${subfolder_location:-"/"}|g" ${vhost_file}
 
 	# copy vhost-level includes
 	for conf in ${vhost_includes}; do
