@@ -2,7 +2,7 @@ Include /etc/_APP_NAME_/addons/apache2/includes/server/*.conf
 
 <VirtualHost *:_RAW_PORT_>
   ServerName _HOSTNAME_
-  Redirect permanent / https://_HOSTNAME_:_SSL_PORT__APP_SUBFOLDER_
+  Redirect permanent _SERVER_PATH_PREFIX_ https://_HOSTNAME_:_SSL_PORT__SERVER_PATH_PREFIX_
 </VirtualHost>
 
 <VirtualHost *:_SSL_PORT_>
@@ -12,7 +12,7 @@ Include /etc/_APP_NAME_/addons/apache2/includes/server/*.conf
   ProxyRequests off
 
   Include /etc/_APP_NAME_/addons/apache2/includes/vhost/*.conf
-
-  ProxyPass _APP_SUBFOLDER_OR_ROOT_ http://127.0.0.1:_APP_PORT__APP_SUBFOLDER_/ retry=0
-  ProxyPassReverse _APP_SUBFOLDER_OR_ROOT_ http://127.0.0.1:_APP_PORT__APP_SUBFOLDER_/
+  
+  ProxyPass _SERVER_PATH_PREFIX_NOSLASH_ http://127.0.0.1:_APP_PORT__SERVER_PATH_PREFIX_ retry=0
+  ProxyPassReverse _SERVER_PATH_PREFIX_NOSLASH_ http://127.0.0.1:_APP_PORT__SERVER_PATH_PREFIX_
 </VirtualHost>

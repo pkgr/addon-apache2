@@ -39,7 +39,7 @@ input_server_params() {
 }
 
 input_subfolder_params() {
-	wiz_put "server/subfolder_location"
+	wiz_put "server/server_path_prefix"
 
 	if wiz_ask ; then
 		STATE="server_ssl"
