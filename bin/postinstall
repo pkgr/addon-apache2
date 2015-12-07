@@ -120,6 +120,7 @@ enable_apache2_vhost_include() {
 
 configure_apache2_server() {
 	local web_hostname="$(wiz_get server/hostname)"
+	local subfolder_location="$(wiz_get server/subfolder_location)"
 	local web_ssl="$(wiz_get server/ssl)"
 	local web_ssl_cert="$(wiz_get server/ssl_cert)"
 	local web_ssl_key="$(wiz_get server/ssl_key)"
@@ -138,6 +139,15 @@ configure_apache2_server() {
 
 	# so that the folder is not empty
 	echo "# placeholder, do not remove" > "$SERVER_INCLUDES_DIR/placeholder.conf"
+
+	# Configure subfolder location
+	if [ -n "$subfolder_location" ]; then
+		# Force leading slash if missing
+		leading=${subfolder_location:0:1}
+		[[ $leading != "/" ]] && subfolder_location="/${subfolder_location}"; :
+
+		${APP_NAME} config:set SUBFOLDER_LOCATION="${subfolder_location}"
+	fi
 
 	if [ "$OSFAMILY" = "redhat" ] ; then
 		web_user="apache"
@@ -170,6 +180,7 @@ configure_apache2_server() {
 	sed -i "s|_SSL_PORT_|${web_ssl_port}|g" ${vhost_file}
 	sed -i "s|_APP_PORT_|${web_app_port}|g" ${vhost_file}
 	sed -i "s|_APP_NAME_|${APP_NAME}|g" ${vhost_file}
+	sed -i "s|_APP_SUBFOLDER_|${subfolder_location}|g" ${vhost_file}
 
 	# copy vhost-level includes
 	for conf in ${vhost_includes}; do
@@ -182,6 +193,7 @@ configure_apache2_server() {
 		sed -i "s|_SSL_CERT_|${web_ssl_cert}|g" ${tmpfile}
 		sed -i "s|_SSL_KEY_|${web_ssl_key}|g" ${tmpfile}
 		sed -i "s|_SSL_CA_|${web_ssl_ca}|g" ${tmpfile}
+		sed -i "s|_APP_SUBFOLDER_|${subfolder_location}|g" ${vhost_file}
 
 		mv -f "$tmpfile" "$dst"
 		enable_apache2_vhost_include "$dst"

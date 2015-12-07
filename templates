@@ -29,6 +29,13 @@ Default: www.example.com
 Description: Your fully qualified domain name:
  Enter the fully qualified domain name (FQDN), where this server can be reached.
 
+Template: server/subfolder_location
+Type: string
+Description: Subdirectory location:
+ If you wish to deploy to a subdirectory (e.g., example.org/openproject), enter the location with a leading slash here.
+ .
+ If you keep this input empty, _APP_NAME_ is installed to the root of your domain.
+
 Template: server/ssl_cert
 Type: string
 Default: /etc/ssl/certs/example.com.crt
