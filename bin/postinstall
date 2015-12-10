@@ -143,7 +143,7 @@ build_server_path_prefix() {
 		trailing=${server_path_prefix:length-1:1}
 		[[ $trailing != "/" ]] && server_path_prefix="${server_path_prefix}/"; :
 
-		server_path_prefix_noslash="${server_path_prefix:0:length-1}"
+		server_path_prefix_noslash="$(echo "$server_path_prefix" | sed "s|/$||")"
 	fi
 
 	${APP_NAME} config:set SERVER_PATH_PREFIX="${server_path_prefix}"
