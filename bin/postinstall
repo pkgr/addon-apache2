@@ -219,8 +219,8 @@ configure_apache2_server() {
 		sed -i "s|_SSL_KEY_|${web_ssl_key}|g" ${tmpfile}
 		sed -i "s|_SSL_CA_|${web_ssl_ca}|g" ${tmpfile}
 		sed -i "s|_APP_NAME_|${APP_NAME}|g" ${tmpfile}
-		sed -i "s|_SERVER_PATH_PREFIX_|${server_path_prefix}|g" ${tmpfile}
 		sed -i "s|_SERVER_PATH_PREFIX_NOSLASH_|${server_path_prefix_noslash}|g" ${tmpfile}
+		sed -i "s|_SERVER_PATH_PREFIX_|${server_path_prefix}|g" ${tmpfile}
 
 		mv -f "$tmpfile" "$dst"
 		enable_apache2_vhost_include "$dst"
