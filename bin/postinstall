@@ -169,7 +169,7 @@ configure_apache2_server() {
 	echo "# placeholder, do not remove" > "$SERVER_INCLUDES_DIR/placeholder.conf"
 
 	if [ "$server_path_prefix_noslash" != "" ]; then
-		vhost_includes="$vhost_includes 00_redirects"
+		vhost_includes="$vhost_includes 00_prefix_redirect"
 		enable_apache2_mod "rewrite"
 	fi
 
@@ -207,6 +207,8 @@ configure_apache2_server() {
 	sed -i "s|_SERVER_PATH_PREFIX_NOSLASH_|${server_path_prefix_noslash}|g" ${vhost_file}
 	sed -i "s|_SERVER_PATH_PREFIX_|${server_path_prefix}|g" ${vhost_file}
 
+	# remove all previously setup includes
+	rm -f ${VHOST_INCLUDES_DIR}/*.conf
 	# copy vhost-level includes
 	for conf in ${vhost_includes}; do
 		tmpfile=$(mktemp)
