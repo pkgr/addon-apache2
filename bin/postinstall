@@ -170,6 +170,7 @@ configure_apache2_server() {
 
 	if [ "$server_path_prefix_noslash" != "" ]; then
 		vhost_includes="$vhost_includes 00_redirects"
+		enable_apache2_mod "rewrite"
 	fi
 
 	if [ "$OSFAMILY" = "redhat" ] ; then
