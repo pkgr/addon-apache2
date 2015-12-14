@@ -133,7 +133,7 @@ build_server_path_prefix() {
 	# Configure subfolder location
 	if [ -z "$server_path_prefix" ]; then
 		server_path_prefix="/"
-		server_path_prefix_noslash="/"
+		server_path_prefix_noslash=""
 	else
 		# Force leading slash if missing
 		leading=${server_path_prefix:0:1}
