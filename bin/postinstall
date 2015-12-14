@@ -168,9 +168,9 @@ configure_apache2_server() {
 	# so that the folder is not empty
 	echo "# placeholder, do not remove" > "$SERVER_INCLUDES_DIR/placeholder.conf"
 
+	enable_apache2_mod "rewrite"
 	if [ "$server_path_prefix_noslash" != "" ]; then
 		vhost_includes="$vhost_includes 00_prefix_redirect"
-		enable_apache2_mod "rewrite"
 	fi
 
 	if [ "$OSFAMILY" = "redhat" ] ; then
