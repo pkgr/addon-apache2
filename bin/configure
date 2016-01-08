@@ -32,6 +32,16 @@ input_server_params() {
 
 	wiz_put "server/hostname"
 	if wiz_ask ; then
+		STATE="server_subfolder"
+	else
+		STATE="start"
+	fi
+}
+
+input_subfolder_params() {
+	wiz_put "server/server_path_prefix"
+
+	if wiz_ask ; then
 		STATE="server_ssl"
 	else
 		STATE="start"
@@ -72,6 +82,9 @@ state_machine() {
 			;;
 		"server_params")
 			input_server_params
+			;;
+		"server_subfolder")
+			input_subfolder_params
 			;;
 		"server_ssl")
 			input_server_ssl

@@ -29,6 +29,13 @@ Default: www.example.com
 Description: Your fully qualified domain name:
  Enter the fully qualified domain name (FQDN), where this server can be reached.
 
+Template: server/server_path_prefix
+Type: string
+Description: Server path prefix:
+ If you wish to deploy to a path prefix (e.g., example.org/openproject), enter the prefix with a leading slash.
+ .
+ If you keep this input empty, _APP_NAME_ is installed to the root of your domain.
+
 Template: server/ssl_cert
 Type: string
 Default: /etc/ssl/certs/example.com.crt

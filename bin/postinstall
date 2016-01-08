@@ -118,6 +118,35 @@ enable_apache2_vhost_include() {
 	fi
 }
 
+##
+# Cleans and sets the server path prefix from user input.
+# Ensures that:
+#
+#   1. The server prefix always has a trailing slash and leading.
+#
+#   2. The server prefix is set to '/' when no configuration was made.
+#
+# Exposes the prefix through SERVER_PATH_PREFIX.
+build_server_path_prefix() {
+	server_path_prefix="$(wiz_get server/server_path_prefix)"
+
+	# Configure subfolder location
+	if [ -z "$server_path_prefix" ]; then
+		server_path_prefix="/"
+		server_path_prefix_noslash=""
+	else
+		# Force leading slash if missing
+		leading=${server_path_prefix:0:1}
+		[[ $leading != "/" ]] && server_path_prefix="/${server_path_prefix}"; :
+
+		# Force trailing slash if missing
+		trailing=${server_path_prefix:length-1:1}
+		[[ $trailing != "/" ]] && server_path_prefix="${server_path_prefix}/"; :
+
+		server_path_prefix_noslash="$(echo "$server_path_prefix" | sed "s|/$||")"
+	fi
+}
+
 configure_apache2_server() {
 	local web_hostname="$(wiz_get server/hostname)"
 	local web_ssl="$(wiz_get server/ssl)"
@@ -138,6 +167,11 @@ configure_apache2_server() {
 
 	# so that the folder is not empty
 	echo "# placeholder, do not remove" > "$SERVER_INCLUDES_DIR/placeholder.conf"
+
+	enable_apache2_mod "rewrite"
+	if [ "$server_path_prefix_noslash" != "" ]; then
+		vhost_includes="$vhost_includes 00_prefix_redirect"
+	fi
 
 	if [ "$OSFAMILY" = "redhat" ] ; then
 		web_user="apache"
@@ -170,7 +204,11 @@ configure_apache2_server() {
 	sed -i "s|_SSL_PORT_|${web_ssl_port}|g" ${vhost_file}
 	sed -i "s|_APP_PORT_|${web_app_port}|g" ${vhost_file}
 	sed -i "s|_APP_NAME_|${APP_NAME}|g" ${vhost_file}
+	sed -i "s|_SERVER_PATH_PREFIX_NOSLASH_|${server_path_prefix_noslash}|g" ${vhost_file}
+	sed -i "s|_SERVER_PATH_PREFIX_|${server_path_prefix}|g" ${vhost_file}
 
+	# remove all previously setup includes
+	rm -f ${VHOST_INCLUDES_DIR}/*.conf
 	# copy vhost-level includes
 	for conf in ${vhost_includes}; do
 		tmpfile=$(mktemp)
@@ -182,6 +220,9 @@ configure_apache2_server() {
 		sed -i "s|_SSL_CERT_|${web_ssl_cert}|g" ${tmpfile}
 		sed -i "s|_SSL_KEY_|${web_ssl_key}|g" ${tmpfile}
 		sed -i "s|_SSL_CA_|${web_ssl_ca}|g" ${tmpfile}
+		sed -i "s|_APP_NAME_|${APP_NAME}|g" ${tmpfile}
+		sed -i "s|_SERVER_PATH_PREFIX_NOSLASH_|${server_path_prefix_noslash}|g" ${tmpfile}
+		sed -i "s|_SERVER_PATH_PREFIX_|${server_path_prefix}|g" ${tmpfile}
 
 		mv -f "$tmpfile" "$dst"
 		enable_apache2_vhost_include "$dst"
@@ -194,6 +235,7 @@ export SERVER_HOSTNAME="${web_hostname}"
 export SERVER_PROTOCOL="${web_protocol}"
 export SERVER_USER="${web_user}"
 export SERVER_GROUP="${web_group}"
+export SERVER_PATH_PREFIX="${server_path_prefix}"
 CONF
 	chown ${APP_USER}.${APP_GROUP} "$CONF"
 
@@ -214,6 +256,7 @@ case "$(wiz_get "server/autoinstall")" in
 	"skip")
 		;;
 	"install")
+		build_server_path_prefix
 		configure_apache2_server
 		;;
 	*)
