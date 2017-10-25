@@ -94,11 +94,11 @@ state_machine() {
 			;;
 		"done")
 			echo "DONE"
-			break
+			exit 0
 			;;
 		*)
 			echo "invalid state ${STATE}"
-			break
+			exit 1
 			;;
 	esac
 }
