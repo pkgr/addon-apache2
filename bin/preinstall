@@ -8,7 +8,7 @@ install_apache2_server() {
 	case "$(wiz_fact "osfamily")" in
 		"debian")
 			if ! wiz_check_package "apache2" ; then
-				apt-get install apache2 -y --force-yes
+				apt-get install apache2 -y
 			fi
 			;;
 		"redhat")
