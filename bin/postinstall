@@ -129,6 +129,11 @@ enable_apache2_vhost_include() {
 # Exposes the prefix through SERVER_PATH_PREFIX.
 build_server_path_prefix() {
 	server_path_prefix="$(wiz_get server/server_path_prefix)"
+	local last_server_path_prefix=$(${APP_NAME} config:get SERVER_PATH_PREFIX || echo "/")
+
+	# Remember the last prefix (if any)
+	echo "Last prefix was ${last_server_path_prefix}"
+	$(${APP_NAME} config:set SERVER_PATH_PREFIX_PREVIOUS="${last_server_path_prefix}")
 
 	# Configure subfolder location
 	if [ -z "$server_path_prefix" ]; then
