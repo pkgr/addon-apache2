@@ -99,11 +99,25 @@ disable_default_apache2_site() {
 
 reload_apache2() {
 	case "$OSFAMILY" in
-		"debian"|"suse")
-			service apache2 restart || true
+		"debian")
+			if apache2ctl configtest ; then
+				service apache2 restart
+			else
+				echo "ERROR: apache config check failed. See above."
+				exit 2
+			fi
+			;;
+		"suse")
+			# apache2ctl is available, but it seems it doesn't work
+			service apache2 restart
 			;;
 		"redhat")
-			service httpd restart || true
+			if httpd -t ; then
+				service httpd restart
+			else
+				echo "ERROR: apache config check failed. See above."
+				exit 2
+			fi
 			;;
 	esac
 }
