@@ -213,6 +213,10 @@ configure_apache2_server() {
 		fi
 
 		enable_apache2_mod "ssl"
+		# RHEL 8
+		if [ -f /usr/libexec/httpd-ssl-gencerts ]; then
+			/usr/libexec/httpd-ssl-gencerts || true
+		fi
 	fi
 
 	cp -f "$template" "$vhost_file"
