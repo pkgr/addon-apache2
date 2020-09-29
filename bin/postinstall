@@ -112,6 +112,10 @@ reload_apache2() {
 			service apache2 restart
 			;;
 		"redhat")
+			# make sure the snakeoil certificates are present
+			if [ -f /usr/libexec/httpd-ssl-gencerts ]; then
+				/usr/libexec/httpd-ssl-gencerts
+			fi
 			if httpd -t ; then
 				service httpd restart
 			else
