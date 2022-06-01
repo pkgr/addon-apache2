@@ -8,6 +8,8 @@ TEMPLATE_SSL="conf/web-ssl"
 TEMPLATE_RAW="conf/web-raw"
 VHOST_INCLUDES_DIR="/etc/${APP_NAME}/addons/apache2/includes/vhost"
 SERVER_INCLUDES_DIR="/etc/${APP_NAME}/addons/apache2/includes/server"
+VHOST_CUSTOMIZATION_DIR="/etc/${APP_NAME}/addons/apache2/custom/vhost"
+SERVER_CUSTOMIZATION_DIR="/etc/${APP_NAME}/addons/apache2/custom/server"
 OSFAMILY="$(wiz_fact osfamily)"
 CONF="/etc/${APP_NAME}/conf.d/server"
 
@@ -17,6 +19,9 @@ mkdir -p "${SERVER_INCLUDES_DIR}"
 # remove existing vhost config files
 rm -f ${VHOST_INCLUDES_DIR}/*.conf
 mkdir -p "${VHOST_INCLUDES_DIR}"
+# add customization dirs
+mkdir -p "${VHOST_CUSTOMIZATION_DIR}"
+mkdir -p "${SERVER_CUSTOMIZATION_DIR}"
 
 enable_apache2_mod() {
 	case "$OSFAMILY" in
