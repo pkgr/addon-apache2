@@ -1,5 +1,5 @@
 Include /etc/_APP_NAME_/addons/apache2/includes/server/*.conf
-Include /etc/_APP_NAME_/addons/apache2/custom/server/*.conf
+IncludeOptional /etc/_APP_NAME_/addons/apache2/custom/server/*.conf
 
 <VirtualHost *:_RAW_PORT_>
   ServerName _HOSTNAME_
@@ -8,7 +8,7 @@ Include /etc/_APP_NAME_/addons/apache2/custom/server/*.conf
   ProxyRequests off
 
   Include /etc/_APP_NAME_/addons/apache2/includes/vhost/*.conf
-  Include /etc/_APP_NAME_/addons/apache2/custom/vhost/*.conf
+  IncludeOptional /etc/_APP_NAME_/addons/apache2/custom/vhost/*.conf
 
   # Can't use Location block since it would overshadow all the other proxypass directives on CentOS
   ProxyPass _SERVER_PATH_PREFIX_ http://127.0.0.1:_APP_PORT__SERVER_PATH_PREFIX_ retry=0
