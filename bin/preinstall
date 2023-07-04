@@ -15,19 +15,19 @@ install_apache2_server() {
 			wiz_check_package "mod_ssl" || yum install -y "mod_ssl"
 			if ! wiz_check_package "httpd" ; then
 				yum install -y httpd
-				service httpd start
+				wiz_service_start "httpd"
 			fi
 			if ! getsebool httpd_can_network_connect | grep -q "\-\-> on" ; then
 				setsebool -P httpd_can_network_connect 1 || true
 			fi
-			chkconfig httpd on
+			wiz_service_enable "httpd"
 			;;
 		"suse")
 			if ! wiz_check_package "apache2" ; then
 				zypper install -y apache2
-				service apache2 start
+				wiz_service_start "apache2"
 			fi
-			chkconfig apache2 on
+			wiz_service_enable "apache2"
 			;;
 	esac
 }
