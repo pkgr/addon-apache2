@@ -3,10 +3,32 @@ Type: select
 Choices: skip, install
 Translations: Skip, Install apache2 server
 Default: install
-Description: Do you want to use this wizard to help setup your web server?
+Description: Do you want to use this wizard to help set up your web server?
  If you want, we can automatically create the web host configuration required by _APP_NAME_.
  .
- If you choose NOT to use this wizard, you will have to manually setup the web host by yourself.
+ If you choose NOT to use this wizard, you will have to manually set up the web host by yourself.
+
+Template: server/autoinstall=skip
+Type: select
+Choices: skip, install
+Translations: Skip, Install apache2 server
+Default: install
+Description: Do you want to change how you had set up your web server?
+ You previously chose to NOT use this wizard and manually set up the web host by yourself.
+ .
+ You can skip this wizard again or choose to install the apache2 server. If you choose to install it,
+ we will automatically create the web host configuration required by _APP_NAME_.
+
+Template: server/autoinstall=install
+Type: select
+Choices: skip, install
+Translations: Uninstall apache2 server, Keep apache2 server
+Default: install
+Description: Do you want to change how you had set up your web server?
+ You previously chose to use this wizard to automatically create the web host configuration required by _APP_NAME_.
+ .
+ You can choose to uninstall the apache2 server or to keep it. If you choose to uninstall it,
+ you will then have to manually set up the web host by yourself.
 
 Template: server/variant
 Type: string
@@ -39,7 +61,7 @@ Description: Server path prefix:
 Template: server/ssl_cert
 Type: string
 Default: /etc/ssl/certs/example.com.crt
-Description: Path to your SSL certificate: 
+Description: Path to your SSL certificate:
  Enter the absolute path to your SSL certificate.
 
 Template: server/ssl_key
@@ -52,4 +74,3 @@ Template: server/ssl_ca
 Type: string
 Description: Path to the CA bundle (leave blank if none):
  Enter the path to your Certification Authority bundle. This file contains the concatenated list of all the intermediary certificates between your SSL certificate and the root certificate. This should have been provided by your SSL provider.
-
